@@ -7,4 +7,5 @@ if not exist "venv" (
 
 :: Активация окружения и запуск программы
 call venv\Scripts\activate
-start pythonw voice_typer.py
+python voice_typer.py
+pause
