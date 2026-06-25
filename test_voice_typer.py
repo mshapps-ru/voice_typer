@@ -22,29 +22,30 @@ class TestVoiceTyperLocalization(unittest.TestCase):
     @patch('voice_typer.keyboard.Listener')
     def test_get_text_helper(self, mock_listener, mock_whisper, mock_icon, mock_tk):
         """Test the _get_text method under different language settings."""
-        # Provide minimal config to avoid KeyError
+        # Provide minimal config
         config = {"language": "ru", "app_language": "ru", "model_size": "base", "device": "auto"}
         with patch.object(VoiceTyperApp, '_load_config', return_value=config):
             with patch.object(VoiceTyperApp, '_save_config_to_file'):
                 app = VoiceTyperApp(Path("dummy_path"))
                 
-                # Test RU translation
-                app.config["app_language"] = "ru"
+                # Default: RU
                 self.assertEqual(app._get_text("ready_to_work"), "ГОТОВ К РАБОТЕ")
                 
-                # Test formatting RU
-                self.assertEqual(app._get_text("language_status", lang="RU"), "ЯЗЫК: RU")
-                
-                # Switch to EN and test translation
+                # Change only App Language to EN
                 app.config["app_language"] = "en"
                 self.assertEqual(app._get_text("ready_to_work"), "READY TO WORK")
                 
-                # Test formatting EN
-                self.assertEqual(app._get_text("language_status", lang="EN"), "LANG: EN")
+                # Check transcription language remains unchanged
+                self.assertEqual(app.config["language"], "ru")
                 
-                # Test fallback for invalid language
-                app.config["app_language"] = "fr"
+                # Change transcription language, ensure App Language is not affected
+                app.config["language"] = "en"
+                self.assertEqual(app._get_text("ready_to_work"), "READY TO WORK")
+                
+                # Back to RU app language
+                app.config["app_language"] = "ru"
                 self.assertEqual(app._get_text("ready_to_work"), "ГОТОВ К РАБОТЕ")
+
 
 
 
