@@ -460,22 +460,37 @@ class VoiceTyperApp:
         y = self.root.winfo_y() + (event.y - self.y)
         self.root.geometry(f"+{x}+{y}")
 
-    def _setup_tray(self):
+    def _generate_icon(self, color, highlight=False):
         img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
-        color = (161, 118, 255, 255)  
         
+        # Base icon
         draw.rounded_rectangle([22, 12, 42, 38], radius=10, fill=color)
         draw.arc([14, 20, 50, 48], start=0, end=180, fill=color, width=4)
         draw.line([32, 46, 32, 56], fill=color, width=4)
         draw.line([20, 56, 44, 56], fill=color, width=4)
         
+        # Add highlight if needed
+        if highlight:
+            # Add a glow/border effect
+            draw.rounded_rectangle([18, 8, 46, 42], radius=12, outline=(255, 255, 0, 255), width=3)
+        return img
+
+    def _setup_tray(self):
+        color = (161, 118, 255, 255)
+        self.tray_icon_normal = self._generate_icon(color, highlight=False)
+        self.tray_icon_recording = self._generate_icon(color, highlight=True)
+        
         menu = pystray.Menu(
             pystray.MenuItem(self._get_text("tray_restore"), self.show_from_tray, default=True),
             pystray.MenuItem(self._get_text("tray_exit"), self.ask_exit)
         )
-        self.tray_icon = pystray.Icon("VoiceTyper", img, "Voice Typer (Whisper)", menu)
+        self.tray_icon = pystray.Icon("VoiceTyper", self.tray_icon_normal, "Voice Typer (Whisper)", menu)
         threading.Thread(target=self.tray_icon.run, daemon=True).start()
+
+    def _update_tray_icon(self, recording=False):
+        if self.tray_icon:
+            self.tray_icon.icon = self.tray_icon_recording if recording else self.tray_icon_normal
 
     def _update_tray_menu(self):
         if self.tray_icon:
@@ -544,6 +559,7 @@ class VoiceTyperApp:
                 self._recording = True
             except Exception: return
         self._update_status_ui("recording", True)
+        self._update_tray_icon(True)
 
     def shutdown_stream_and_type(self):
         with self._lock:
@@ -558,6 +574,7 @@ class VoiceTyperApp:
             stream.close()
             
         self._update_status_ui("processing", False)
+        self._update_tray_icon(False)
         threading.Thread(target=self._transcribe, args=(frames, self.config["language"]), daemon=True).start()
 
     def _transcribe(self, frames: List[np.ndarray], language: str):
