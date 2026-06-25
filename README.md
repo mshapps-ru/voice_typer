@@ -76,6 +76,16 @@ pip install numpy sounddevice pynput torch openai-whisper pyautogui pyperclip pi
 ```cmd
 python voice_typer.py
 
+или
+
+run_voice_typer.cmd
+
+```
+
+Если при запуске приложения ошибки или просто не запускается - используйте команду из активированного виртуального окружения (`venv`):
+
+```cmd
+debug_voice_typer.cmd
 ```
 
 > 💡 **First Run Note / Важно при первом старте:**
