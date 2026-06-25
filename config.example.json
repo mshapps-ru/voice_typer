@@ -1,0 +1,16 @@
+{
+  "show_window_hotkey": "<f8>",
+  "record_key": "f9",
+  "lang_toggle_hotkey": "f10",
+  "sample_rate": 16000,
+  "channels": 1,
+  "model_size": "base",
+  "device": "auto",
+  "beam_size": 1,
+  "language": "ru",
+  "initial_prompt": "\u0420\u0430\u0437\u0433\u043e\u0432\u043e\u0440 \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c \u044f\u0437\u044b\u043a\u0435, \u0441 \u0437\u0430\u043f\u044f\u0442\u044b\u043c\u0438 \u0438 \u0442\u043e\u0447\u043a\u0430\u043c\u0438.",
+  "silence_guard_seconds": 0.35,
+  "typing_backend": "pyautogui",
+  "window_size": "320x200",
+  "record_hotkey": "<f9>"
+}
